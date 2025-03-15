@@ -1,0 +1,1 @@
+loom_add_test(piece_table_test)
