@@ -13,14 +13,13 @@ namespace logloom {
 
 class PieceTable {
 public:
-  PieceTable() = default;
-  explicit PieceTable(std::string text)
-      : original_(std::move(text)),
-        pieces_({{
-            .offset_ = 0,
-            .length_ = original_.size(),
-            .type_ = Piece::Type::Original,
-        }}) {}
+  static constexpr uint64_t kDefaultChunkSize = 64;
+
+  explicit PieceTable(uint64_t chunk_size = kDefaultChunkSize)
+      : chunk_size_(chunk_size) {}
+  explicit PieceTable(std::string_view str,
+                      uint64_t chunk_size = kDefaultChunkSize)
+      : chunk_size_(chunk_size), pieces_(append_string(str)) {}
 
   PieceTable(const PieceTable &other) = delete;
   PieceTable(PieceTable &&other) noexcept = default;
@@ -29,15 +28,9 @@ public:
   ~PieceTable() = default;
 
   void insert(uint64_t offset, std::string_view str) {
-    auto piece = Piece{
-        .offset_ = added_.size(),
-        .length_ = str.length(),
-        .type_ = Piece::Type::Added,
-    };
-    added_.append(str);
-
     auto iter = maybe_split_at(offset);
-    pieces_.insert(iter, piece);
+    auto ps = append_string(str);
+    pieces_.insert(iter, ps.begin(), ps.end());
   }
 
   void remove(uint64_t offset, uint64_t length) {
@@ -51,22 +44,18 @@ public:
   std::string dump() const {
     std::string ret;
     for (auto &piece : pieces_) {
-      if (piece.type_ == Piece::Type::Original) {
-        ret.append(original_.substr(piece.offset_, piece.length_));
-      } else {
-        ret.append(added_.substr(piece.offset_, piece.length_));
-      }
+      auto &chunk = chunks_[piece.chunk_idx_];
+      assert(chunk.size() <= chunk_size_);
+      ret.append(chunk.substr(piece.offset_, piece.length_));
     }
     return ret;
   }
 
 private:
   struct Piece {
-    enum class Type : uint8_t { Original, Added };
-
     uint64_t offset_{};
     uint64_t length_{};
-    Type type_ = Type::Original;
+    uint64_t chunk_idx_{};
 
     std::pair<Piece, Piece> split(uint64_t pivot) {
       assert(pivot > 0);
@@ -74,18 +63,44 @@ private:
       auto left = Piece{
           .offset_ = offset_,
           .length_ = pivot,
-          .type_ = type_,
+          .chunk_idx_ = chunk_idx_,
       };
       auto right = Piece{
           .offset_ = offset_ + pivot,
           .length_ = length_ - pivot,
-          .type_ = type_,
+          .chunk_idx_ = chunk_idx_,
       };
       return std::make_pair(left, right);
     };
 
     std::strong_ordering operator<=>(const Piece &other) const = default;
   };
+
+  std::vector<Piece> append_string(std::string_view str) {
+    if (str.empty()) {
+      return {};
+    }
+    auto start = total_size_ / chunk_size_;
+    auto end = (total_size_ + str.size() + chunk_size_ - 1) / chunk_size_;
+    assert(start < end);
+    chunks_.resize(end);
+    uint64_t str_cursor = 0;
+    std::vector<Piece> ps;
+    for (auto i = start; i < end; i++) {
+      auto &chunk = chunks_[i];
+      if (chunk.capacity() != chunk_size_) {
+        chunk.reserve(chunk_size_);
+      }
+      auto rest_str_len = str.size() - str_cursor;
+      auto rest_chunk_len = chunk_size_ - chunk.size();
+      auto str_len = std::min(rest_str_len, rest_chunk_len);
+      ps.emplace_back(chunk.size(), str_len, i);
+      chunk.append(str.substr(str_cursor, str_len));
+      str_cursor += str_len;
+    }
+    total_size_ += str.size();
+    return ps;
+  }
 
   auto maybe_split_at(uint64_t offset) -> std::vector<Piece>::iterator {
     auto [piece_start, iter] = find_piece(offset);
@@ -123,8 +138,9 @@ private:
     return std::make_pair(piece_start, pieces_.end());
   }
 
-  std::string original_;
-  std::string added_;
+  uint64_t chunk_size_;
+  uint64_t total_size_{};
+  std::vector<std::string> chunks_;
   std::vector<Piece> pieces_;
 
   friend class ::PieceTableTest;
