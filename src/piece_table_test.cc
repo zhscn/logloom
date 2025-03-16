@@ -9,27 +9,25 @@ class PieceTableTest : public ::testing::Test {
 protected:
   void SetUp() override {
     table = std::make_unique<logloom::PieceTable>(8);
-    // Initialize chunks with "00001111" and "2222"
-    table->chunks_.resize(2);
-    table->chunks_[0] = "00001111";
-    table->chunks_[1] = "2222";
-    table->total_size_ = 12;  // Total size of all chunks
+    auto c0 = std::make_shared<std::string>("00001111");
+    auto c1 = std::make_shared<std::string>("2222");
+    table->pending_chunk_ = c1;
 
     auto &pieces = table->pieces_;
     piece0 = {
         .offset_ = 0,
         .length_ = 4,
-        .chunk_idx_ = 0,
+        .chunk_ = c0,
     };
     piece1 = {
         .offset_ = 4,
         .length_ = 4,
-        .chunk_idx_ = 0,
+        .chunk_ = c0,
     };
     piece2 = {
         .offset_ = 0,
         .length_ = 4,
-        .chunk_idx_ = 1,
+        .chunk_ = c1,
     };
     pieces.push_back(piece0);
     pieces.push_back(piece1);
@@ -105,40 +103,38 @@ protected:
     auto [left, right] = piece0.split(2);
     EXPECT_EQ(left.offset_, 0);
     EXPECT_EQ(left.length_, 2);
-    EXPECT_EQ(left.chunk_idx_, 0);
+    EXPECT_EQ(*left.chunk_, "00001111");
     EXPECT_EQ(right.offset_, 2);
     EXPECT_EQ(right.length_, 2);
-    EXPECT_EQ(right.chunk_idx_, 0);
+    EXPECT_EQ(*right.chunk_, "00001111");
   }
 
   void test_maybe_split_at() {
     auto iter = table->maybe_split_at(2);
     EXPECT_EQ(iter->offset_, 2);
     EXPECT_EQ(iter->length_, 2);
-    EXPECT_EQ(iter->chunk_idx_, 0);
     EXPECT_EQ(table->pieces_.size(), 4);
     EXPECT_EQ(table->pieces_[0].offset_, 0);
     EXPECT_EQ(table->pieces_[0].length_, 2);
-    EXPECT_EQ(table->pieces_[0].chunk_idx_, 0);
+    EXPECT_EQ(*table->pieces_[0].chunk_, "00001111");
     EXPECT_EQ(table->pieces_[1], *iter);
   }
 
   void test_insert() {
     table->insert(4, "xxxx");
-    EXPECT_EQ(table->chunks_[1], "2222xxxx");
+    EXPECT_EQ(*table->pending_chunk_, "2222xxxx");
     EXPECT_EQ(table->pieces_.size(), 4);
     EXPECT_EQ(table->pieces_[1].offset_, 4);
     EXPECT_EQ(table->pieces_[1].length_, 4);
-    EXPECT_EQ(table->pieces_[1].chunk_idx_, 1);  // New chunk index
+    EXPECT_EQ(*table->pieces_[1].chunk_, *table->pending_chunk_);
     EXPECT_EQ(table->dump(), "0000xxxx11112222");
 
     table->insert(16, "yyyy");
-    EXPECT_EQ(table->chunks_.size(), 3);
-    EXPECT_EQ(table->chunks_[2], "yyyy");
+    EXPECT_EQ(*table->pending_chunk_, "yyyy");
     EXPECT_EQ(table->pieces_.size(), 5);
     EXPECT_EQ(table->pieces_[4].offset_, 0);
     EXPECT_EQ(table->pieces_[4].length_, 4);
-    EXPECT_EQ(table->pieces_[4].chunk_idx_, 2);  // New chunk index
+    EXPECT_EQ(*table->pieces_[4].chunk_, "yyyy");
     EXPECT_EQ(table->dump(), "0000xxxx11112222yyyy");
 
     table->insert(18, "zzzz");
@@ -153,23 +149,23 @@ protected:
     EXPECT_EQ(table->pieces_.size(), 2);
     EXPECT_EQ(table->pieces_[0].offset_, 4);
     EXPECT_EQ(table->pieces_[0].length_, 4);
-    EXPECT_EQ(table->pieces_[0].chunk_idx_, 0);
+    EXPECT_EQ(*table->pieces_[0].chunk_, "00001111");
     EXPECT_EQ(table->pieces_[1].offset_, 0);
     EXPECT_EQ(table->pieces_[1].length_, 4);
-    EXPECT_EQ(table->pieces_[1].chunk_idx_, 1);
+    EXPECT_EQ(*table->pieces_[1].chunk_, "2222");
     EXPECT_EQ(table->dump(), "11112222");
 
     table->remove(1, 2);
     EXPECT_EQ(table->pieces_.size(), 3);
     EXPECT_EQ(table->pieces_[0].offset_, 4);
     EXPECT_EQ(table->pieces_[0].length_, 1);
-    EXPECT_EQ(table->pieces_[0].chunk_idx_, 0);
+    EXPECT_EQ(*table->pieces_[0].chunk_, "00001111");
     EXPECT_EQ(table->pieces_[1].offset_, 7);
     EXPECT_EQ(table->pieces_[1].length_, 1);
-    EXPECT_EQ(table->pieces_[1].chunk_idx_, 0);
+    EXPECT_EQ(*table->pieces_[1].chunk_, "00001111");
     EXPECT_EQ(table->pieces_[2].offset_, 0);
     EXPECT_EQ(table->pieces_[2].length_, 4);
-    EXPECT_EQ(table->pieces_[2].chunk_idx_, 1);
+    EXPECT_EQ(*table->pieces_[2].chunk_, "2222");
     EXPECT_EQ(table->dump(), "112222");
 
     table->remove(0, 6);
