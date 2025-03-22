@@ -44,7 +44,7 @@ CPMAddPackage("gh:google/googletest@1.16.0")
 find_package(Boost REQUIRED)
 
 ### Targets
-add_library(loom src/chunk_manager.cc)
+add_library(loom src/chunk.cc src/chunk_manager.cc)
 target_link_libraries(
   loom
   PUBLIC
