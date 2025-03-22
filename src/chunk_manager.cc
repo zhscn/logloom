@@ -10,12 +10,11 @@ ChunkManager::ChunkManager(ChunkLoaderPtr loader, uint32_t chunk_size,
       chunk_memory_limit_(chunk_memory_limit) {}
 
 Result<std::string_view> ChunkManager::get_chunk(ChunkView view) {
-  assert(view.offset_ + view.length_ <= loader_->size());
   auto &[id, off, len] = view;
   assert(id < chunks_.size());
+  assert(id * chunk_size_ + off + len <= loader_->size());
   TRYV(touch_chunk(id));
-  auto &c = chunks_[id];
-  return std::string_view(c.data).substr(view.offset_, view.length_);
+  return std::string_view(chunks_[id].data).substr(off, len);
 }
 
 Result<std::vector<std::string_view>> ChunkManager::get_chunks(

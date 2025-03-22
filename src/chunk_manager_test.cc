@@ -103,6 +103,7 @@ protected:
     for (int i = 0; i < 5; i++) {
       test_data += std::string(10, 'A' + i);
     }
+    test_data += std::string(5, 'F');
     auto chunk_file = std::make_unique<TestChunkLoader>(std::move(test_data));
     mgr_ = std::make_unique<ChunkManager>(std::move(chunk_file), chunk_size,
                                           memory_limit);
@@ -186,6 +187,11 @@ protected:
     for (auto& c : mgr_->lru_) {
       ASSERT_NE(c.data, std::string(10, 'D'));
     }
+
+    // touch F evict E lru: F B A
+    auto chunk6 = mgr_->get_chunk(ChunkView{5, 0, 5});
+    ASSERT_TRUE(chunk6);
+    ASSERT_EQ(chunk6.value(), std::string(5, 'F'));
   }
 
   std::unique_ptr<ChunkManager> mgr_;
