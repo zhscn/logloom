@@ -38,14 +38,26 @@ endif()
 include(${CPM_DOWNLOAD_LOCATION})
 
 ### Library
+CPMAddPackage("gh:fmtlib/fmt#11.1.4")
+CPMAddPackage("gh:zhscn/outcome@0.1.0")
 CPMAddPackage("gh:google/googletest@1.16.0")
+find_package(Boost REQUIRED)
 
 ### Targets
+add_library(loom src/chunk_manager.cc)
+target_link_libraries(
+  loom
+  PUBLIC
+  fmt::fmt
+  outcome::outcome
+  Boost::boost
+)
+
 enable_testing()
 
 function(loom_add_test name)
   add_executable(${name} ${name}.cc)
-  target_link_libraries(${name} PRIVATE GTest::gtest_main)
+  target_link_libraries(${name} PRIVATE loom GTest::gtest_main)
   add_test(NAME ${name} COMMAND ${name})
 endfunction()
 

@@ -1,1 +1,2 @@
 loom_add_test(piece_table_test)
+loom_add_test(chunk_manager_test)
