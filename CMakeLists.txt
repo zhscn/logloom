@@ -41,6 +41,7 @@ include(${CPM_DOWNLOAD_LOCATION})
 CPMAddPackage("gh:fmtlib/fmt#11.1.4")
 CPMAddPackage("gh:zhscn/outcome@0.1.0")
 CPMAddPackage("gh:google/googletest@1.16.0")
+CPMAddPackage("gh:jarro2783/cxxopts@3.2.0")
 find_package(Boost REQUIRED)
 
 ### Targets
@@ -52,6 +53,18 @@ target_link_libraries(
   outcome::outcome
   Boost::boost
 )
+
+add_executable(logloom src/main.cc)
+target_link_libraries(
+  logloom
+  PRIVATE
+  cxxopts
+  loom
+)
+
+set_property(
+  SOURCE src/main.cc
+  PROPERTY COMPILE_DEFINITIONS LOGLOOM_VERSION="${PROJECT_VERSION}")
 
 enable_testing()
 
