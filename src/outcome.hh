@@ -433,7 +433,7 @@ SYSTEM_ERROR2_NAMESPACE_END
 namespace logloom {
 using SYSTEM_ERROR2_NAMESPACE::make_error;
 
-enum class GenericErrc : int8_t {
+enum class GenericErrc : int {
   unknown = -1,
   address_family_not_supported = EAFNOSUPPORT,
   address_in_use = EADDRINUSE,
