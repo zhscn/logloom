@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace logloom {
+namespace oned {
 
 using ChunkID = uint32_t;
 
@@ -49,4 +49,4 @@ struct ChunkLoader {  // NOLINT
 };
 using ChunkLoaderPtr = std::unique_ptr<ChunkLoader>;
 
-}  // namespace logloom
+}  // namespace oned

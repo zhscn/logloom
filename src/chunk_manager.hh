@@ -5,7 +5,7 @@
 
 class ChunkManagerTest;
 
-namespace logloom {
+namespace oned {
 
 class ChunkManager : NonCopyable {
 public:
@@ -36,4 +36,4 @@ private:
   friend class ::ChunkManagerTest;
 };
 
-}  // namespace logloom
+}  // namespace oned

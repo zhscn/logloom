@@ -10,7 +10,7 @@
 
 class PieceTableTest;
 
-namespace logloom {
+namespace oned {
 
 class PieceTable {
 public:
@@ -149,4 +149,4 @@ private:
 
   friend class ::PieceTableTest;
 };
-}  // namespace logloom
+}  // namespace oned

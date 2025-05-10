@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-using namespace logloom;
+using namespace oned;
 
 class TestChunkLoader final : public ChunkLoader, NonCopyable {
 public:

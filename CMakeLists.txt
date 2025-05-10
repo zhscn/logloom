@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(
-  logloom
-  VERSION 0.1.0
+  oned
+  VERSION 0.0.1
   LANGUAGES CXX C
 )
 
@@ -38,39 +38,48 @@ endif()
 include(${CPM_DOWNLOAD_LOCATION})
 
 ### Library
+CPMAddPackage(
+  URI     "gh:abseil/abseil-cpp#20250127.1"
+  OPTIONS "ABSL_ENABLE_INSTALL ON")
 CPMAddPackage("gh:fmtlib/fmt#11.2.0")
 CPMAddPackage("gh:zhscn/outcome@0.1.0")
 CPMAddPackage("gh:google/googletest@1.17.0")
-CPMAddPackage("gh:jarro2783/cxxopts@3.2.0")
 find_package(Boost REQUIRED)
 
 ### Targets
-add_library(loom src/chunk.cc src/chunk_manager.cc)
+add_library(oned-core src/chunk.cc src/chunk_manager.cc)
 target_link_libraries(
-  loom
+  oned-core
   PUBLIC
   fmt::fmt
   outcome::outcome
   Boost::boost
 )
 
-add_executable(logloom src/main.cc)
+add_executable(oned src/main.cc)
 target_link_libraries(
-  logloom
+  oned
   PRIVATE
-  cxxopts
-  loom
+  absl::log_initialize
+  absl::log
+  absl::flags
+  absl::flags_parse
+  # requires CMake 3.24
+  $<LINK_LIBRARY:WHOLE_ARCHIVE,absl::log_flags>
+  oned-core
 )
 
 set_property(
   SOURCE src/main.cc
-  PROPERTY COMPILE_DEFINITIONS LOGLOOM_VERSION="${PROJECT_VERSION}")
+  PROPERTY COMPILE_DEFINITIONS
+  ONED_VERSION="${PROJECT_VERSION}"
+  ONED_ROOT="${PROJECT_SOURCE_DIR}")
 
 enable_testing()
 
-function(loom_add_test name)
+function(oned_add_test name)
   add_executable(${name} ${name}.cc)
-  target_link_libraries(${name} PRIVATE loom GTest::gtest_main)
+  target_link_libraries(${name} PRIVATE oned-core GTest::gtest_main)
   add_test(NAME ${name} COMMAND ${name})
 endfunction()
 

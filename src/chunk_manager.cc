@@ -1,6 +1,6 @@
 #include "chunk_manager.hh"
 
-namespace logloom {
+namespace oned {
 
 ChunkManager::ChunkManager(ChunkLoaderPtr loader, uint32_t chunk_size,
                            uint64_t chunk_memory_limit)
@@ -55,4 +55,4 @@ Result<void> ChunkManager::touch_chunk(ChunkID id) {
   return outcome::success();
 }
 
-}  // namespace logloom
+}  // namespace oned

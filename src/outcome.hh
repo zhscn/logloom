@@ -1,3 +1,5 @@
+// IWYU pragma: always_keep
+
 #pragma once
 
 #include <fmt/core.h>
@@ -14,7 +16,7 @@
 
 namespace outcome = OUTCOME_V2_NAMESPACE::experimental;
 
-namespace logloom {
+namespace oned {
 
 template <typename R,
           typename S = outcome::erased_errored_status_code<
@@ -31,7 +33,7 @@ template <typename R,
               outcome::policy::default_status_outcome_policy<R, S, P>>
 using Outcome = outcome::status_outcome<R, S, P, NoValuePolicy>;
 
-}  // namespace logloom
+}  // namespace oned
 
 template <>
 struct fmt::formatter<SYSTEM_ERROR2_NAMESPACE::status_code_domain::string_ref>
@@ -430,10 +432,10 @@ inline auto make_error(
 
 SYSTEM_ERROR2_NAMESPACE_END
 
-namespace logloom {
+namespace oned {
 using SYSTEM_ERROR2_NAMESPACE::make_error;
 
-enum class GenericErrc : int {
+enum class GenericErrc : int { // NOLINT
   unknown = -1,
   address_family_not_supported = EAFNOSUPPORT,
   address_in_use = EADDRINUSE,
@@ -748,13 +750,13 @@ inline GenericErrc errno_to_errc(int e) {  // NOLINT
   }
   return GenericErrc::unknown;
 }
-}  // namespace logloom
+}  // namespace oned
 
 SYSTEM_ERROR2_NAMESPACE_BEGIN
 template <>
-struct quick_status_code_from_enum<logloom::GenericErrc>
-    : quick_status_code_from_enum_defaults<logloom::GenericErrc> {
-  static constexpr auto domain_name = "logloom::GenericErrc";
+struct quick_status_code_from_enum<oned::GenericErrc>
+    : quick_status_code_from_enum_defaults<oned::GenericErrc> {
+  static constexpr auto domain_name = "oned::GenericErrc";
   // 0xbe3fa47c5bf771af
   static constexpr auto domain_uuid = "60e74dc8-2bb0-4f19-9af0-327decfabcf2";
   // 0x7413569d6f9952c0 ^ 0xc44f7bdeb2cc50e9 = 0xb05c2d43dd550229
@@ -764,83 +766,83 @@ struct quick_status_code_from_enum<logloom::GenericErrc>
     // NOLINTBEGIN
     // clang-format off
     static const std::initializer_list<mapping> v = {
-        {logloom::GenericErrc::address_family_not_supported, "address_family_not_supported", {errc::address_family_not_supported}},
-        {logloom::GenericErrc::address_in_use, "address_in_use", {errc::address_in_use}},
-        {logloom::GenericErrc::address_not_available, "address_not_available", {errc::address_not_available}},
-        {logloom::GenericErrc::already_connected, "already_connected", {errc::already_connected}},
-        {logloom::GenericErrc::argument_list_too_long, "argument_list_too_long", {errc::argument_list_too_long}},
-        {logloom::GenericErrc::argument_out_of_domain, "argument_out_of_domain", {errc::argument_out_of_domain}},
-        {logloom::GenericErrc::bad_address, "bad_address", {errc::bad_address}},
-        {logloom::GenericErrc::bad_file_descriptor, "bad_file_descriptor", {errc::bad_file_descriptor}},
-        {logloom::GenericErrc::bad_message, "bad_message", {errc::bad_message}},
-        {logloom::GenericErrc::broken_pipe, "broken_pipe", {errc::broken_pipe}},
-        {logloom::GenericErrc::connection_aborted, "connection_aborted", {errc::connection_aborted}},
-        {logloom::GenericErrc::connection_already_in_progress, "connection_already_in_progress", {errc::connection_already_in_progress}},
-        {logloom::GenericErrc::connection_refused, "connection_refused", {errc::connection_refused}},
-        {logloom::GenericErrc::connection_reset, "connection_reset", {errc::connection_reset}},
-        {logloom::GenericErrc::cross_device_link, "cross_device_link", {errc::cross_device_link}},
-        {logloom::GenericErrc::destination_address_required, "destination_address_required", {errc::destination_address_required}},
-        {logloom::GenericErrc::device_or_resource_busy, "device_or_resource_busy", {errc::device_or_resource_busy}},
-        {logloom::GenericErrc::directory_not_empty, "directory_not_empty", {errc::directory_not_empty}},
-        {logloom::GenericErrc::executable_format_error, "executable_format_error", {errc::executable_format_error}},
-        {logloom::GenericErrc::file_exists, "file_exists", {errc::file_exists}},
-        {logloom::GenericErrc::file_too_large, "file_too_large", {errc::file_too_large}},
-        {logloom::GenericErrc::filename_too_long, "filename_too_long", {errc::filename_too_long}},
-        {logloom::GenericErrc::function_not_supported, "function_not_supported", {errc::function_not_supported}},
-        {logloom::GenericErrc::host_unreachable, "host_unreachable", {errc::host_unreachable}},
-        {logloom::GenericErrc::identifier_removed, "identifier_removed", {errc::identifier_removed}},
-        {logloom::GenericErrc::illegal_byte_sequence, "illegal_byte_sequence", {errc::illegal_byte_sequence}},
-        {logloom::GenericErrc::inappropriate_io_control_operation, "inappropriate_io_control_operation", {errc::inappropriate_io_control_operation}},
-        {logloom::GenericErrc::interrupted, "interrupted", {errc::interrupted}},
-        {logloom::GenericErrc::invalid_argument, "invalid_argument", {errc::invalid_argument}},
-        {logloom::GenericErrc::invalid_seek, "invalid_seek", {errc::invalid_seek}},
-        {logloom::GenericErrc::io_error, "io_error", {errc::io_error}},
-        {logloom::GenericErrc::is_a_directory, "is_a_directory", {errc::is_a_directory}},
-        {logloom::GenericErrc::message_size, "message_size", {errc::message_size}},
-        {logloom::GenericErrc::network_down, "network_down", {errc::network_down}},
-        {logloom::GenericErrc::network_reset, "network_reset", {errc::network_reset}},
-        {logloom::GenericErrc::network_unreachable, "network_unreachable", {errc::network_unreachable}},
-        {logloom::GenericErrc::no_buffer_space, "no_buffer_space", {errc::no_buffer_space}},
-        {logloom::GenericErrc::no_child_process, "no_child_process", {errc::no_child_process}},
-        {logloom::GenericErrc::no_link, "no_link", {errc::no_link}},
-        {logloom::GenericErrc::no_lock_available, "no_lock_available", {errc::no_lock_available}},
-        {logloom::GenericErrc::no_message, "no_message", {errc::no_message}},
-        {logloom::GenericErrc::no_protocol_option, "no_protocol_option", {errc::no_protocol_option}},
-        {logloom::GenericErrc::no_space_on_device, "no_space_on_device", {errc::no_space_on_device}},
-        {logloom::GenericErrc::no_stream_resources, "no_stream_resources", {errc::no_stream_resources}},
-        {logloom::GenericErrc::no_such_device_or_address, "no_such_device_or_address", {errc::no_such_device_or_address}},
-        {logloom::GenericErrc::no_such_device, "no_such_device", {errc::no_such_device}},
-        {logloom::GenericErrc::no_such_file_or_directory, "no_such_file_or_directory", {errc::no_such_file_or_directory}},
-        {logloom::GenericErrc::no_such_process, "no_such_process", {errc::no_such_process}},
-        {logloom::GenericErrc::not_a_directory, "not_a_directory", {errc::not_a_directory}},
-        {logloom::GenericErrc::not_a_socket, "not_a_socket", {errc::not_a_socket}},
-        {logloom::GenericErrc::not_a_stream, "not_a_stream", {errc::not_a_stream}},
-        {logloom::GenericErrc::not_connected, "not_connected", {errc::not_connected}},
-        {logloom::GenericErrc::not_enough_memory, "not_enough_memory", {errc::not_enough_memory}},
-        {logloom::GenericErrc::not_supported, "not_supported", {errc::not_supported}},
-        {logloom::GenericErrc::operation_canceled, "operation_canceled", {errc::operation_canceled}},
-        {logloom::GenericErrc::operation_in_progress, "operation_in_progress", {errc::operation_in_progress}},
-        {logloom::GenericErrc::operation_not_permitted, "operation_not_permitted", {errc::operation_not_permitted}},
-        {logloom::GenericErrc::operation_not_supported, "operation_not_supported", {errc::operation_not_supported}},
-        {logloom::GenericErrc::operation_would_block, "operation_would_block", {errc::operation_would_block}},
-        {logloom::GenericErrc::owner_dead, "owner_dead", {errc::owner_dead}},
-        {logloom::GenericErrc::permission_denied, "permission_denied", {errc::permission_denied}},
-        {logloom::GenericErrc::protocol_error, "protocol_error", {errc::protocol_error}},
-        {logloom::GenericErrc::protocol_not_supported, "protocol_not_supported", {errc::protocol_not_supported}},
-        {logloom::GenericErrc::read_only_file_system, "read_only_file_system", {errc::read_only_file_system}},
-        {logloom::GenericErrc::resource_deadlock_would_occur, "resource_deadlock_would_occur", {errc::resource_deadlock_would_occur}},
-        {logloom::GenericErrc::resource_unavailable_try_again, "resource_unavailable_try_again", {errc::resource_unavailable_try_again}},
-        {logloom::GenericErrc::result_out_of_range, "result_out_of_range", {errc::result_out_of_range}},
-        {logloom::GenericErrc::state_not_recoverable, "state_not_recoverable", {errc::state_not_recoverable}},
-        {logloom::GenericErrc::stream_timeout, "stream_timeout", {errc::stream_timeout}},
-        {logloom::GenericErrc::text_file_busy, "text_file_busy", {errc::text_file_busy}},
-        {logloom::GenericErrc::timed_out, "timed_out", {errc::timed_out}},
-        {logloom::GenericErrc::too_many_files_open_in_system, "too_many_files_open_in_system", {errc::too_many_files_open_in_system}},
-        {logloom::GenericErrc::too_many_files_open, "too_many_files_open", {errc::too_many_files_open}},
-        {logloom::GenericErrc::too_many_links, "too_many_links", {errc::too_many_links}},
-        {logloom::GenericErrc::too_many_symbolic_link_levels, "too_many_symbolic_link_levels", {errc::too_many_symbolic_link_levels}},
-        {logloom::GenericErrc::value_too_large, "value_too_large", {errc::value_too_large}},
-        {logloom::GenericErrc::wrong_protocol_type, "wrong_protocol_type", {errc::wrong_protocol_type}},
+        {oned::GenericErrc::address_family_not_supported, "address_family_not_supported", {errc::address_family_not_supported}},
+        {oned::GenericErrc::address_in_use, "address_in_use", {errc::address_in_use}},
+        {oned::GenericErrc::address_not_available, "address_not_available", {errc::address_not_available}},
+        {oned::GenericErrc::already_connected, "already_connected", {errc::already_connected}},
+        {oned::GenericErrc::argument_list_too_long, "argument_list_too_long", {errc::argument_list_too_long}},
+        {oned::GenericErrc::argument_out_of_domain, "argument_out_of_domain", {errc::argument_out_of_domain}},
+        {oned::GenericErrc::bad_address, "bad_address", {errc::bad_address}},
+        {oned::GenericErrc::bad_file_descriptor, "bad_file_descriptor", {errc::bad_file_descriptor}},
+        {oned::GenericErrc::bad_message, "bad_message", {errc::bad_message}},
+        {oned::GenericErrc::broken_pipe, "broken_pipe", {errc::broken_pipe}},
+        {oned::GenericErrc::connection_aborted, "connection_aborted", {errc::connection_aborted}},
+        {oned::GenericErrc::connection_already_in_progress, "connection_already_in_progress", {errc::connection_already_in_progress}},
+        {oned::GenericErrc::connection_refused, "connection_refused", {errc::connection_refused}},
+        {oned::GenericErrc::connection_reset, "connection_reset", {errc::connection_reset}},
+        {oned::GenericErrc::cross_device_link, "cross_device_link", {errc::cross_device_link}},
+        {oned::GenericErrc::destination_address_required, "destination_address_required", {errc::destination_address_required}},
+        {oned::GenericErrc::device_or_resource_busy, "device_or_resource_busy", {errc::device_or_resource_busy}},
+        {oned::GenericErrc::directory_not_empty, "directory_not_empty", {errc::directory_not_empty}},
+        {oned::GenericErrc::executable_format_error, "executable_format_error", {errc::executable_format_error}},
+        {oned::GenericErrc::file_exists, "file_exists", {errc::file_exists}},
+        {oned::GenericErrc::file_too_large, "file_too_large", {errc::file_too_large}},
+        {oned::GenericErrc::filename_too_long, "filename_too_long", {errc::filename_too_long}},
+        {oned::GenericErrc::function_not_supported, "function_not_supported", {errc::function_not_supported}},
+        {oned::GenericErrc::host_unreachable, "host_unreachable", {errc::host_unreachable}},
+        {oned::GenericErrc::identifier_removed, "identifier_removed", {errc::identifier_removed}},
+        {oned::GenericErrc::illegal_byte_sequence, "illegal_byte_sequence", {errc::illegal_byte_sequence}},
+        {oned::GenericErrc::inappropriate_io_control_operation, "inappropriate_io_control_operation", {errc::inappropriate_io_control_operation}},
+        {oned::GenericErrc::interrupted, "interrupted", {errc::interrupted}},
+        {oned::GenericErrc::invalid_argument, "invalid_argument", {errc::invalid_argument}},
+        {oned::GenericErrc::invalid_seek, "invalid_seek", {errc::invalid_seek}},
+        {oned::GenericErrc::io_error, "io_error", {errc::io_error}},
+        {oned::GenericErrc::is_a_directory, "is_a_directory", {errc::is_a_directory}},
+        {oned::GenericErrc::message_size, "message_size", {errc::message_size}},
+        {oned::GenericErrc::network_down, "network_down", {errc::network_down}},
+        {oned::GenericErrc::network_reset, "network_reset", {errc::network_reset}},
+        {oned::GenericErrc::network_unreachable, "network_unreachable", {errc::network_unreachable}},
+        {oned::GenericErrc::no_buffer_space, "no_buffer_space", {errc::no_buffer_space}},
+        {oned::GenericErrc::no_child_process, "no_child_process", {errc::no_child_process}},
+        {oned::GenericErrc::no_link, "no_link", {errc::no_link}},
+        {oned::GenericErrc::no_lock_available, "no_lock_available", {errc::no_lock_available}},
+        {oned::GenericErrc::no_message, "no_message", {errc::no_message}},
+        {oned::GenericErrc::no_protocol_option, "no_protocol_option", {errc::no_protocol_option}},
+        {oned::GenericErrc::no_space_on_device, "no_space_on_device", {errc::no_space_on_device}},
+        {oned::GenericErrc::no_stream_resources, "no_stream_resources", {errc::no_stream_resources}},
+        {oned::GenericErrc::no_such_device_or_address, "no_such_device_or_address", {errc::no_such_device_or_address}},
+        {oned::GenericErrc::no_such_device, "no_such_device", {errc::no_such_device}},
+        {oned::GenericErrc::no_such_file_or_directory, "no_such_file_or_directory", {errc::no_such_file_or_directory}},
+        {oned::GenericErrc::no_such_process, "no_such_process", {errc::no_such_process}},
+        {oned::GenericErrc::not_a_directory, "not_a_directory", {errc::not_a_directory}},
+        {oned::GenericErrc::not_a_socket, "not_a_socket", {errc::not_a_socket}},
+        {oned::GenericErrc::not_a_stream, "not_a_stream", {errc::not_a_stream}},
+        {oned::GenericErrc::not_connected, "not_connected", {errc::not_connected}},
+        {oned::GenericErrc::not_enough_memory, "not_enough_memory", {errc::not_enough_memory}},
+        {oned::GenericErrc::not_supported, "not_supported", {errc::not_supported}},
+        {oned::GenericErrc::operation_canceled, "operation_canceled", {errc::operation_canceled}},
+        {oned::GenericErrc::operation_in_progress, "operation_in_progress", {errc::operation_in_progress}},
+        {oned::GenericErrc::operation_not_permitted, "operation_not_permitted", {errc::operation_not_permitted}},
+        {oned::GenericErrc::operation_not_supported, "operation_not_supported", {errc::operation_not_supported}},
+        {oned::GenericErrc::operation_would_block, "operation_would_block", {errc::operation_would_block}},
+        {oned::GenericErrc::owner_dead, "owner_dead", {errc::owner_dead}},
+        {oned::GenericErrc::permission_denied, "permission_denied", {errc::permission_denied}},
+        {oned::GenericErrc::protocol_error, "protocol_error", {errc::protocol_error}},
+        {oned::GenericErrc::protocol_not_supported, "protocol_not_supported", {errc::protocol_not_supported}},
+        {oned::GenericErrc::read_only_file_system, "read_only_file_system", {errc::read_only_file_system}},
+        {oned::GenericErrc::resource_deadlock_would_occur, "resource_deadlock_would_occur", {errc::resource_deadlock_would_occur}},
+        {oned::GenericErrc::resource_unavailable_try_again, "resource_unavailable_try_again", {errc::resource_unavailable_try_again}},
+        {oned::GenericErrc::result_out_of_range, "result_out_of_range", {errc::result_out_of_range}},
+        {oned::GenericErrc::state_not_recoverable, "state_not_recoverable", {errc::state_not_recoverable}},
+        {oned::GenericErrc::stream_timeout, "stream_timeout", {errc::stream_timeout}},
+        {oned::GenericErrc::text_file_busy, "text_file_busy", {errc::text_file_busy}},
+        {oned::GenericErrc::timed_out, "timed_out", {errc::timed_out}},
+        {oned::GenericErrc::too_many_files_open_in_system, "too_many_files_open_in_system", {errc::too_many_files_open_in_system}},
+        {oned::GenericErrc::too_many_files_open, "too_many_files_open", {errc::too_many_files_open}},
+        {oned::GenericErrc::too_many_links, "too_many_links", {errc::too_many_links}},
+        {oned::GenericErrc::too_many_symbolic_link_levels, "too_many_symbolic_link_levels", {errc::too_many_symbolic_link_levels}},
+        {oned::GenericErrc::value_too_large, "value_too_large", {errc::value_too_large}},
+        {oned::GenericErrc::wrong_protocol_type, "wrong_protocol_type", {errc::wrong_protocol_type}},
     };
     // clang-format on
     // NOLINTEND

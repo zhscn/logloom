@@ -10,6 +10,7 @@ Checks: '
         -bugprone-easily-swappable-parameters,
         -cppcoreguidelines-avoid-magic-numbers,
         -cppcoreguidelines-non-private-member-variables-in-classes,
+        -cppcoreguidelines-pro-type-vararg,
         -modernize-use-nodiscard,
         -modernize-use-ranges,
         -modernize-use-trailing-return-type,

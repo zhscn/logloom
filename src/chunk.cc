@@ -4,7 +4,7 @@
 #include <cassert>
 #include <cerrno>
 
-namespace logloom {
+namespace oned {
 
 std::pair<ChunkView, ChunkView> ChunkView::split_at(uint32_t pivot) const {
   assert(pivot != 0);
@@ -124,4 +124,4 @@ Result<ChunkLoaderPtr> ChunkLoader::open(const char* path) {
   return std::make_unique<FileChunkLoader>(file, file_size.value());
 }
 
-}  // namespace logloom
+}  // namespace oned

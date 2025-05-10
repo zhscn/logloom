@@ -1,6 +1,6 @@
 #pragma once
 
-namespace logloom {
+namespace oned {
 struct NonCopyable {
   NonCopyable() = default;
   NonCopyable(const NonCopyable &) = delete;
@@ -9,4 +9,4 @@ struct NonCopyable {
   NonCopyable &operator=(NonCopyable &&) = default;
   ~NonCopyable() = default;
 };
-}  // namespace logloom
+}  // namespace oned

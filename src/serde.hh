@@ -8,7 +8,7 @@
 #include <string>
 #include <type_traits>
 
-namespace logloom {
+namespace oned {
 
 namespace detail {
 uint64_t zig_zag_encode(int64_t value) {
@@ -316,4 +316,4 @@ void deserialize(Deserializer &deserializer, C &container) {
   }
 }
 
-}  // namespace logloom
+}  // namespace oned

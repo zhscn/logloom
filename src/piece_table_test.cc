@@ -3,12 +3,12 @@
 #include <gtest/gtest.h>
 #include <random>
 
-using logloom::PieceTable;
+using oned::PieceTable;
 
 class PieceTableTest : public ::testing::Test {
 protected:
   void SetUp() override {
-    table = std::make_unique<logloom::PieceTable>(8);
+    table = std::make_unique<oned::PieceTable>(8);
     auto c0 = std::make_shared<std::string>("00001111");
     auto c1 = std::make_shared<std::string>("2222");
     table->pending_chunk_ = c1;
@@ -34,10 +34,10 @@ protected:
     pieces.push_back(piece2);
   }
 
-  std::unique_ptr<logloom::PieceTable> table;
-  logloom::PieceTable::Piece piece0;
-  logloom::PieceTable::Piece piece1;
-  logloom::PieceTable::Piece piece2;
+  std::unique_ptr<oned::PieceTable> table;
+  oned::PieceTable::Piece piece0;
+  oned::PieceTable::Piece piece1;
+  oned::PieceTable::Piece piece2;
 
   void test_find_piece_aligned() {
     {
