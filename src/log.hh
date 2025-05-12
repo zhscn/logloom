@@ -7,18 +7,19 @@
 
 #define LOG_FNAME(name) static constexpr const char *FNAME = #name
 
-#define LOG_IMPLF(_log, _serverity, _spec, ...)                   \
-  do {                                                            \
-    char buf[4096];                                               \
-    fmt::format_to_result res;                                    \
-    _log(_serverity) << [&buf, &res]() -> std::string_view {      \
-      res = fmt::format_to(buf, "{} " _spec, FNAME, __VA_ARGS__); \
-      return std::string_view(buf, res.out - buf);                \
-    }();                                                          \
-    if (res.truncated) [[unlikely]] {                             \
-      LOG(WARNING) << "the last log entry is truncated";          \
-    }                                                             \
-  } while (false);
+#define LOG_IMPLF(_log, _serverity, _spec, ...)                           \
+  /* NOLINTBEGIN */                                                       \
+  do {                                                                    \
+    char LOG_IMPL__buf[4096];                                             \
+    _log(_serverity) << [&] {                                             \
+      auto res =                                                          \
+          fmt::format_to(LOG_IMPL__buf, "{} " _spec, FNAME, __VA_ARGS__); \
+      if (res.truncated) [[unlikely]] {                                   \
+        LOG(WARNING) << "the next log is truncated";                      \
+      }                                                                   \
+      return std::string_view(LOG_IMPL__buf, res.out - LOG_IMPL__buf);    \
+    }();                                                                  \
+  } while (false); /* NOLINTEND */
 
 #define FATALF(...) LOG_IMPLF(LOG, FATAL, __VA_ARGS__)
 #define ERRORF(...) LOG_IMPLF(LOG, ERROR, __VA_ARGS__)
