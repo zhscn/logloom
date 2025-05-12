@@ -15,6 +15,7 @@ Checks: '
         -modernize-use-ranges,
         -modernize-use-trailing-return-type,
         -readability-identifier-length,
+        -readability-function-cognitive-complexity,
         -readability-magic-numbers,
         -readability-math-missing-parentheses,
         -readability-qualified-auto
