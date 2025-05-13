@@ -23,9 +23,11 @@ private:
   std::string data_;
 };
 
+// NOLINTBEGIN
 const char* file;
 int line;
 const char* message;
+// NOLINTEND
 
 #define SET_SCOPE(msg)  \
   file = __FILE_NAME__; \
@@ -38,7 +40,7 @@ void test_views(uint64_t offset, uint64_t length, uint64_t size,
   ::testing::ScopedTrace trace(file, line, message);
   auto ret = calculate_chunk_views(offset, length, chunk_size);
   ASSERT_EQ(ret.size(), size);
-  for (auto i = 0; i < vs.size(); i++) {
+  for (size_t i = 0; i < vs.size(); i++) {
     ASSERT_EQ(vs[i], ret[i]);
   }
 }
@@ -101,7 +103,7 @@ protected:
   void SetUp() override {
     std::string test_data;
     for (int i = 0; i < 5; i++) {
-      test_data += std::string(10, 'A' + i);
+      test_data += std::string(10, 'A' + i);  // NOLINT
     }
     test_data += std::string(5, 'F');
     auto chunk_file = std::make_unique<TestChunkLoader>(std::move(test_data));

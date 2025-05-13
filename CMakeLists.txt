@@ -55,6 +55,7 @@ target_link_libraries(
   outcome::outcome
   Boost::boost
 )
+target_compile_options(oned-core PUBLIC -Wall -Wextra)
 
 add_executable(oned src/main.cc)
 target_link_libraries(
