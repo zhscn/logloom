@@ -51,6 +51,7 @@ add_library(oned-core src/chunk.cc src/chunk_manager.cc)
 target_link_libraries(
   oned-core
   PUBLIC
+  absl::log
   fmt::fmt
   outcome::outcome
   Boost::boost
@@ -62,7 +63,6 @@ target_link_libraries(
   oned
   PRIVATE
   absl::log_initialize
-  absl::log
   absl::flags
   absl::flags_parse
   # requires CMake 3.24
