@@ -39,7 +39,7 @@ include(${CPM_DOWNLOAD_LOCATION})
 
 ### Library
 CPMAddPackage(
-  URI     "gh:abseil/abseil-cpp#20250127.1"
+  URI     "gh:abseil/abseil-cpp#20250512.0"
   OPTIONS "ABSL_ENABLE_INSTALL ON")
 CPMAddPackage("gh:fmtlib/fmt#11.2.0")
 CPMAddPackage("gh:zhscn/outcome@0.1.0")
