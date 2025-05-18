@@ -47,7 +47,7 @@ CPMAddPackage("gh:google/googletest@1.17.0")
 find_package(Boost REQUIRED)
 
 ### Targets
-add_library(oned-core src/chunk.cc src/chunk_manager.cc)
+add_library(oned-core src/chunk.cc src/chunk_manager.cc src/terminal_handler.cc)
 target_link_libraries(
   oned-core
   PUBLIC
