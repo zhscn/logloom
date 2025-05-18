@@ -1,4 +1,5 @@
 #include "log.hh"
+#include "terminal_handler.hh"
 
 #include <absl/flags/flag.h>
 #include <absl/flags/parse.h>
@@ -65,10 +66,41 @@ void handle_args(int argc, char** argv) {
   absl::ParseCommandLine(argc, argv);
 }
 
+namespace oned {
+int run() {
+  TerminalHangler t;
+  while (true) {
+    // if (auto c_ = t.read_char(); c_) {
+    //   char c = c_.value();
+    //   if (c == '\x1b') {
+    //     INFOF("ESC");
+    //   } else if (isascii(c)) {
+    //     INFOF("char: {}", c);
+    //   } else {
+    //     INFOF("int: {}", (int)c);
+    //   }
+
+    //   if (c == 'q') {
+    //     break;
+    //   }
+    //   // t.write({&c, 1});
+    // }
+    if (auto key = t.get_next_key(); key) {
+      INFOF("{}", *key);
+      if (key->modifier == Key::Ctrl && key->key == 'c') {
+        break;
+      }
+    }
+  }
+  return 0;
+}
+}  // namespace oned
+
 int main(int argc, char** argv) {
   try {
     handle_args(argc, argv);
     setup_logger(absl::GetFlag(FLAGS_log_dir));
+    return oned::run();
   } catch (const std::exception& ex) {
     ERRORF("{}", ex.what());
     return 1;
