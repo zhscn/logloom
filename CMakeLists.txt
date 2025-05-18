@@ -16,8 +16,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ### CPM
-set(CPM_DOWNLOAD_VERSION "0.41.0")
-set(CPM_HASH_SUM "e570f03806b9aae2082ca5b950a9e6b3b41ad56972a78a876aedcaad16653116")
+set(CPM_DOWNLOAD_VERSION "0.42.0")
+set(CPM_HASH_SUM "2020b4fc42dba44817983e06342e682ecfc3d2f484a581f11cc5731fbe4dce8a")
 set(CPM_DOWNLOAD_URL "https://github.com/cpm-cmake/CPM.cmake/releases/download/v${CPM_DOWNLOAD_VERSION}/CPM.cmake")
 
 if(CPM_SOURCE_CACHE)
@@ -39,7 +39,7 @@ include(${CPM_DOWNLOAD_LOCATION})
 
 ### Library
 CPMAddPackage(
-  URI     "gh:abseil/abseil-cpp#20250127.1"
+  URI     "gh:abseil/abseil-cpp#20250512.0"
   OPTIONS "ABSL_ENABLE_INSTALL ON")
 CPMAddPackage("gh:fmtlib/fmt#11.2.0")
 CPMAddPackage("gh:zhscn/outcome@0.1.0")
