@@ -11,13 +11,25 @@
 
 #include <fcntl.h>
 
+/**
+ * setup_logger
+ *
+ * log level is handled by the flags defined in absl::log_flags library.
+ *
+ * ERROR: --stderrthreshold=0 (default level)
+ * WARNING: --stderrthreshold=1
+ * INFO: --stderrthreshold=2
+ * DEBUG: --stderrthreshold=2 --v=1
+ * TRACE: --stderrthreshold=2 --v=2
+ */
 void setup_logger(std::string_view sv) {
-  absl::SetStderrThreshold(absl::LogSeverity::kInfo);
   absl::InitializeLog();
 
   if (isatty(STDERR_FILENO) == 0) {
     return;
   }
+
+  // redirect stderr to a file when it is attached to a terminal
 
   auto name = fmt::format("{}/oned.{}.log", sv, getpid());
   auto fd = open(name.c_str(), O_WRONLY | O_CREAT | O_APPEND, 0644);
@@ -31,7 +43,8 @@ void setup_logger(std::string_view sv) {
   close(fd);
 }
 
-ABSL_FLAG(std::string, log_dir, "/tmp", "the dir of log file");
+ABSL_FLAG(std::string, log_dir, "/tmp",
+          "The directory to store log files when stderr is not redirected");
 
 void handle_args(int argc, char** argv) {
   absl::FlagsUsageConfig cfg;
@@ -40,35 +53,25 @@ void handle_args(int argc, char** argv) {
     return !absl::StrContains(sv, "absl");
   };
   cfg.normalize_filename = [](absl::string_view sv) -> std::string {
-    auto len =
-        absl::StrContains(sv, "absl") ? sv.rfind("absl/") : sizeof(ONED_ROOT);
+    auto len = sizeof(ONED_ROOT);
+    if (auto n = sv.rfind("oned/"); n != absl::string_view::npos) {
+      len = n;
+    }
     return {sv.data() + len, sv.length() - len};
   };
 
   absl::SetFlagsUsageConfig(cfg);
-
   absl::SetProgramUsageMessage("one editor");
   absl::ParseCommandLine(argc, argv);
 }
 
-void check_tty() {
-  if (isatty(STDIN_FILENO) == 0) {
-    throw std::runtime_error(
-        fmt::format("stdin is not a tty: {}", strerror(errno)));
-  }
-  if (isatty(STDOUT_FILENO) == 0) {
-    throw std::runtime_error(
-        fmt::format("stdout is not a tty: {}", strerror(errno)));
-  }
-}
-
 int main(int argc, char** argv) {
+  LOG_FNAME(main);
   try {
     handle_args(argc, argv);
-    check_tty();
     setup_logger(absl::GetFlag(FLAGS_log_dir));
   } catch (const std::exception& ex) {
-    fmt::println("{}", ex.what());
+    ERRORF("{}", ex.what());
     return 1;
   }
   return 0;
