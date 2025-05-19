@@ -83,7 +83,6 @@ int run() {
 }  // namespace oned
 
 int main(int argc, char** argv) {
-  LOG_FNAME(main);
   try {
     handle_args(argc, argv);
     setup_logger(absl::GetFlag(FLAGS_log_dir));

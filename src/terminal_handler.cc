@@ -15,7 +15,6 @@ TerminalHangler::TerminalHangler() : fd_(open("/dev/tty", O_RDWR)) {
     throw std::runtime_error(
         fmt::format("can not open /dev/tty: {}", strerror(errno)));
   }
-  LOG_FNAME(TerminalHangler::TerminalHangler);
   INFOF("open /dev/tty: {}", fd_);
   enable_raw_mode();
 }
@@ -52,7 +51,6 @@ void TerminalHangler::enable_raw_mode() {
     return;
   }
 
-  LOG_FNAME(TerminalHangler::enable_raw_mode);
   INFOF("enable raw mode");
 
   termios t{};
@@ -73,7 +71,6 @@ void TerminalHangler::disable_raw_mode() {
   if (!orig_termios_) {
     return;
   }
-  LOG_FNAME(TerminalHangler::disable_raw_mode);
   INFOF("disable raw mode");
   tcsetattr(fd_, TCSAFLUSH, &*orig_termios_);
   orig_termios_.reset();
@@ -102,7 +99,6 @@ std::optional<char> TerminalHangler::read_char() {
     throw std::runtime_error(
         fmt::format("Failed to read from terminal: {}", strerror(errno)));
   }
-  LOG_FNAME(TerminalHangler::read_char);
   INFOF("read {} bytes from terminal", n);
   read_buf_.insert(read_buf_.end(), buf.data(), buf.data() + n);  // NOLINT
   return read_buf_[read_pos_++];
