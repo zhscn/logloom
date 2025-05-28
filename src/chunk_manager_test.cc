@@ -30,7 +30,7 @@ const char* message;
 // NOLINTEND
 
 #define SET_SCOPE(msg)  \
-  file = __FILE_NAME__; \
+  file = __FILE__; \
   line = __LINE__;      \
   message = #msg;
 
