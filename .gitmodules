@@ -1,0 +1,3 @@
+[submodule "src/outcome"]
+	path = src/outcome
+	url = https://github.com/zhscn/outcome.git
